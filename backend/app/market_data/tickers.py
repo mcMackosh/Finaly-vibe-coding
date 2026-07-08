@@ -24,6 +24,8 @@ TICKER_PROFILES: dict[str, TickerProfile] = {
     "NFLX":  TickerProfile(650.0, mu=0.08, sigma=0.33, sector="media"),
 }
 
+DEFAULT_WATCHLIST: list[str] = list(TICKER_PROFILES.keys())
+
 DEFAULT_PROFILE = TickerProfile(seed_price=100.0, mu=0.06, sigma=0.30, sector="other")
 
 

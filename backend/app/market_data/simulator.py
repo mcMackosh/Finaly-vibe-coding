@@ -5,6 +5,7 @@ import math
 import random
 from collections.abc import Iterable
 
+from app.market_data.base import MarketDataProvider
 from app.market_data.cache import PriceCache
 from app.market_data.models import PriceTick
 from app.market_data.tickers import profile_for
@@ -20,9 +21,9 @@ EVENT_PROBABILITY_PER_TICK = 0.0006   # ~a couple of "surprise" moves per ticker
 EVENT_MAGNITUDE_RANGE = (0.02, 0.05)  # 2-5% jump
 
 
-class SimulatedMarketDataProvider:
+class SimulatedMarketDataProvider(MarketDataProvider):
     def __init__(self, cache: PriceCache, rng: random.Random | None = None) -> None:
-        self._cache = cache
+        super().__init__(cache)
         self._rng = rng or random.Random()
         self._prices: dict[str, float] = {}
         self._task: asyncio.Task | None = None
@@ -40,6 +41,13 @@ class SimulatedMarketDataProvider:
             except asyncio.CancelledError:
                 pass
 
+    async def add_ticker(self, ticker: str) -> None:
+        self._seed(ticker)
+
+    async def remove_ticker(self, ticker: str) -> None:
+        self._prices.pop(ticker, None)
+        await self._cache.remove(ticker)
+
     def _seed(self, ticker: str) -> None:
         if ticker not in self._prices:
             self._prices[ticker] = profile_for(ticker).seed_price
@@ -49,17 +57,23 @@ class SimulatedMarketDataProvider:
         try:
             while True:
                 await asyncio.sleep(UPDATE_INTERVAL_SECONDS)
-                await self._step(dt)
+                for tick in self._step(dt):
+                    await self._cache.update(tick)
         except asyncio.CancelledError:
             raise
 
-    async def _step(self, dt: float) -> None:
+    def _step(self, dt: float) -> list[PriceTick]:
+        """Advance every tracked ticker by one time step and return the resulting ticks.
+
+        Pure/synchronous so it can be driven deterministically in unit tests with a seeded rng.
+        """
         tickers = list(self._prices.keys())
         if not tickers:
-            return
+            return []
 
         market_shock = self._rng.gauss(0, 1)
         sector_shocks: dict[str, float] = {}
+        ticks: list[PriceTick] = []
 
         for ticker in tickers:
             profile = profile_for(ticker)
@@ -79,6 +93,6 @@ class SimulatedMarketDataProvider:
 
             new_price = max(new_price, 0.01)
             self._prices[ticker] = new_price
+            ticks.append(PriceTick.build(ticker, price=new_price, previous_price=previous_price))
 
-            tick = PriceTick.build(ticker, price=new_price, previous_price=previous_price)
-            await self._cache.update(tick)
+        return ticks

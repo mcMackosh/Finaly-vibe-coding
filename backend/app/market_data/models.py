@@ -35,3 +35,12 @@ class PriceTick(BaseModel):
             direction=Direction.UP if change > 0 else Direction.DOWN if change < 0 else Direction.FLAT,
             timestamp=datetime.now(timezone.utc),
         )
+
+
+class PriceState(BaseModel):
+    """Latest known state for a ticker, as held in the cache and returned by REST endpoints."""
+
+    ticker: str
+    price: float
+    previous_price: float
+    updated_at: datetime

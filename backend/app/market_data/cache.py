@@ -2,25 +2,34 @@
 
 import asyncio
 
-from app.market_data.models import PriceTick
+from app.market_data.models import PriceState, PriceTick
 
 
 class PriceCache:
     def __init__(self) -> None:
-        self._state: dict[str, PriceTick] = {}
+        self._state: dict[str, PriceState] = {}
         self._lock = asyncio.Lock()
         self._subscribers: set[asyncio.Queue[PriceTick]] = set()
 
     async def update(self, tick: PriceTick) -> None:
         async with self._lock:
-            self._state[tick.ticker] = tick
+            self._state[tick.ticker] = PriceState(
+                ticker=tick.ticker,
+                price=tick.price,
+                previous_price=tick.previous_price,
+                updated_at=tick.timestamp,
+            )
         self._publish(tick)
 
     async def remove(self, ticker: str) -> None:
         async with self._lock:
             self._state.pop(ticker, None)
 
-    async def get_all(self) -> dict[str, PriceTick]:
+    async def get(self, ticker: str) -> PriceState | None:
+        async with self._lock:
+            return self._state.get(ticker)
+
+    async def get_all(self) -> dict[str, PriceState]:
         async with self._lock:
             return dict(self._state)
 
@@ -37,4 +46,5 @@ class PriceCache:
             try:
                 queue.put_nowait(tick)
             except asyncio.QueueFull:
+                # A stalled client shouldn't block ticks for everyone else; drop for that one.
                 pass
