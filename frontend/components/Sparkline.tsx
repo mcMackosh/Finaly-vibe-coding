@@ -42,8 +42,8 @@ export function Sparkline({
       height - pad - ((v - min) / range) * (height - pad * 2);
 
     const rising = values[values.length - 1] >= values[0];
-    ctx.strokeStyle = rising ? "#26a269" : "#e5484d";
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = rising ? "#10b981" : "#f43f5e";
+    ctx.lineWidth = 1.75;
     ctx.lineJoin = "round";
     ctx.beginPath();
     values.forEach((v, i) => {

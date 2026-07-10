@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-/** A slightly-elevated surface panel with an optional title and header slot. */
+/** Card panel: rounded-xl, shadowed, no hard borders — modern SaaS aesthetic. */
 export function Panel({
   title,
   actions,
@@ -16,12 +16,12 @@ export function Panel({
 }) {
   return (
     <section
-      className={`flex min-h-0 flex-col overflow-hidden rounded-lg border border-border bg-surface ${className}`}
+      className={`flex min-h-0 flex-col overflow-hidden rounded-xl bg-surface shadow-sm ${className}`}
     >
       {(title || actions) && (
-        <header className="flex shrink-0 items-center justify-between border-b border-border px-3 py-2">
+        <header className="flex shrink-0 items-center justify-between px-4 py-3">
           {title && (
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+            <h2 className="text-xs font-semibold text-text-muted">
               {title}
             </h2>
           )}

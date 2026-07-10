@@ -25,7 +25,7 @@ export function MainChart() {
   }));
 
   const rising = (tick?.change ?? 0) >= 0;
-  const stroke = rising ? "#26a269" : "#e5484d";
+  const stroke = rising ? "#10b981" : "#f43f5e";
 
   return (
     <Panel
@@ -62,25 +62,25 @@ export function MainChart() {
             </defs>
             <XAxis
               dataKey="time"
-              tick={{ fill: "#8b949e", fontSize: 10 }}
+              tick={{ fill: "#94a3b8", fontSize: 10 }}
               minTickGap={48}
-              stroke="#30363d"
+              stroke="#334155"
             />
             <YAxis
               domain={["auto", "auto"]}
-              tick={{ fill: "#8b949e", fontSize: 10 }}
+              tick={{ fill: "#94a3b8", fontSize: 10 }}
               width={56}
-              stroke="#30363d"
+              stroke="#334155"
               tickFormatter={(v: number) => v.toFixed(2)}
             />
             <Tooltip
               contentStyle={{
-                background: "#1c2230",
-                border: "1px solid #30363d",
+                background: "#2d3a4f",
+                border: "1px solid #334155",
                 borderRadius: 6,
                 fontSize: 12,
               }}
-              labelStyle={{ color: "#8b949e" }}
+              labelStyle={{ color: "#94a3b8" }}
               formatter={(v) => [formatPrice(Number(v)), "Price"]}
             />
             <Area

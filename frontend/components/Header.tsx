@@ -5,33 +5,15 @@ import { formatCurrency, formatSignedCurrency, pnlColor } from "@/lib/format";
 
 const STATUS_META: Record<
   ConnectionStatus,
-  { color: string; label: string }
+  { dot: string; label: string }
 > = {
-  connecting: { color: "bg-accent", label: "Connecting to price stream…" },
-  connected: { color: "bg-up", label: "Live — connected to price stream" },
-  reconnecting: { color: "bg-accent", label: "Reconnecting to price stream…" },
-  disconnected: { color: "bg-down", label: "Disconnected from price stream" },
+  connecting: { dot: "bg-accent animate-pulse", label: "Connecting…" },
+  connected: { dot: "bg-up", label: "Live" },
+  reconnecting: { dot: "bg-accent animate-pulse", label: "Reconnecting…" },
+  disconnected: { dot: "bg-down", label: "Disconnected" },
 };
 
-function ConnectionDot({ status }: { status: ConnectionStatus }) {
-  const meta = STATUS_META[status];
-  const pulse = status === "connecting" || status === "reconnecting";
-  return (
-    <div className="group relative flex items-center gap-2">
-      <span
-        className={`inline-block h-2.5 w-2.5 rounded-full ${meta.color} ${
-          pulse ? "animate-pulse" : ""
-        }`}
-      />
-      <span className="text-xs text-text-muted">{status}</span>
-      <span className="pointer-events-none absolute right-0 top-full z-20 mt-1 hidden whitespace-nowrap rounded border border-border bg-surface-raised px-2 py-1 text-xs text-text-primary shadow-lg group-hover:block">
-        {meta.label}
-      </span>
-    </div>
-  );
-}
-
-function Stat({
+function StatPill({
   label,
   value,
   valueClass = "text-text-primary",
@@ -41,13 +23,19 @@ function Stat({
   valueClass?: string;
 }) {
   return (
-    <div className="flex flex-col items-end">
-      <span className="text-[10px] uppercase tracking-wider text-text-muted">
-        {label}
-      </span>
-      <span className={`font-mono text-sm font-semibold tabular-nums ${valueClass}`}>
-        {value}
-      </span>
+    <div className="flex flex-col items-center gap-0.5">
+      <span className="text-[10px] font-medium text-text-muted">{label}</span>
+      <span className={`text-sm font-bold tabular-nums ${valueClass}`}>{value}</span>
+    </div>
+  );
+}
+
+function ConnectionBadge({ status }: { status: ConnectionStatus }) {
+  const { dot, label } = STATUS_META[status];
+  return (
+    <div className="flex items-center gap-1.5 rounded-full bg-surface-raised px-3 py-1">
+      <span className={`inline-block h-2 w-2 rounded-full ${dot}`} />
+      <span className="text-xs font-medium text-text-muted">{label}</span>
     </div>
   );
 }
@@ -60,25 +48,46 @@ export function Header() {
   const pnl = portfolio?.unrealized_pnl ?? 0;
 
   return (
-    <header className="flex shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-2.5">
-      <div className="flex items-baseline gap-2">
-        <span className="font-mono text-lg font-bold tracking-tight text-text-primary">
-          Fin<span className="text-accent">Ally</span>
-        </span>
-        <span className="hidden text-xs text-text-muted sm:inline">
-          AI Trading Workstation
-        </span>
+    <header className="flex shrink-0 items-center justify-between bg-surface px-6 py-3 shadow-sm">
+      {/* Logo */}
+      <div className="flex items-center gap-3">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 shadow-sm">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 14L7 8.5L10.5 12L13 7L17 10"
+              stroke="#06b6d4"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+        <div>
+          <span className="text-lg font-bold text-text-primary">
+            Fin<span className="text-accent">Ally</span>
+          </span>
+        </div>
       </div>
 
+      {/* Stats */}
       <div className="flex items-center gap-6">
-        <Stat label="Portfolio Value" value={formatCurrency(totalValue)} />
-        <Stat label="Cash" value={formatCurrency(cash)} />
-        <Stat
-          label="Unrealized P&L"
+        <StatPill label="Portfolio" value={formatCurrency(totalValue)} valueClass="text-accent" />
+        <div className="h-8 w-px bg-border" />
+        <StatPill label="Cash" value={formatCurrency(cash)} />
+        <div className="h-8 w-px bg-border" />
+        <StatPill
+          label="P&L"
           value={formatSignedCurrency(pnl)}
           valueClass={pnlColor(pnl)}
         />
-        <ConnectionDot status={connectionStatus} />
+        <div className="h-8 w-px bg-border" />
+        <ConnectionBadge status={connectionStatus} />
       </div>
     </header>
   );

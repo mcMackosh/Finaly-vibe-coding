@@ -2,13 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useStore } from "@/lib/store";
-import { formatPercent, formatPrice, pnlColor } from "@/lib/format";
+import { formatPercent, formatPrice } from "@/lib/format";
 import { Panel } from "./Panel";
 import { Sparkline } from "./Sparkline";
 import type { PriceTick } from "@/lib/types";
 import type { PricePoint } from "@/lib/store";
 
-/** A single watchlist row; flashes green/red on each incoming tick. */
+/** A compact ticker row for the SaaS watchlist. */
 function WatchlistRow({
   ticker,
   tick,
@@ -30,11 +30,9 @@ function WatchlistRow({
   useEffect(() => {
     const el = priceRef.current;
     if (!el || !tick) return;
-    // Fire once per new tick, even if the numeric price repeats.
     if (tick.timestamp === lastStamp.current) return;
     lastStamp.current = tick.timestamp;
     if (tick.direction === "flat") return;
-
     const cls = tick.direction === "up" ? "flash-up" : "flash-down";
     el.classList.add(cls);
     const id = requestAnimationFrame(() => el.classList.remove(cls));
@@ -43,46 +41,54 @@ function WatchlistRow({
 
   const price = tick?.price ?? null;
   const changePct = tick?.change_percent ?? null;
+  const isUp = (changePct ?? 0) >= 0;
 
   return (
     <div
       role="row"
       onClick={onSelect}
-      className={`group grid cursor-pointer grid-cols-[1fr_auto_auto] items-center gap-2 border-l-2 px-3 py-1.5 text-sm hover:bg-surface-raised ${
-        selected
-          ? "border-accent bg-surface-raised"
-          : "border-transparent"
+      className={`group flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 transition-colors hover:bg-surface-raised ${
+        selected ? "bg-surface-raised ring-1 ring-accent/40" : ""
       }`}
     >
-      <div className="flex items-center gap-2">
-        <span className="font-mono font-semibold text-text-primary">
+      {/* Left: ticker + sparkline */}
+      <div className="flex items-center gap-3">
+        <span className="w-14 font-mono text-sm font-semibold text-text-primary">
           {ticker}
         </span>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove();
-          }}
-          aria-label={`Remove ${ticker}`}
-          className="hidden text-xs text-text-muted hover:text-down group-hover:inline"
-        >
-          ✕
-        </button>
+        <Sparkline points={history} />
       </div>
 
-      <Sparkline points={history} />
-
-      <div className="flex flex-col items-end">
+      {/* Right: price + change pill */}
+      <div className="flex flex-col items-end gap-0.5">
         <span
           ref={priceRef}
-          className="price-cell px-1 font-mono tabular-nums text-text-primary"
+          className="price-cell rounded px-1 font-mono text-sm font-medium text-text-primary"
         >
           {formatPrice(price)}
         </span>
-        <span className={`font-mono text-xs tabular-nums ${pnlColor(changePct ?? 0)}`}>
+        <span
+          className={`inline-flex items-center rounded-full px-2 py-0.5 font-mono text-[10px] font-semibold ${
+            isUp
+              ? "bg-emerald-500/15 text-emerald-400"
+              : "bg-rose-500/15 text-rose-400"
+          }`}
+        >
           {formatPercent(changePct)}
         </span>
       </div>
+
+      {/* Remove button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onRemove();
+        }}
+        aria-label={`Remove ${ticker}`}
+        className="ml-2 hidden text-xs text-text-muted hover:text-rose-400 group-hover:inline"
+      >
+        ✕
+      </button>
     </div>
   );
 }
@@ -123,30 +129,30 @@ export function Watchlist() {
 
   return (
     <Panel
-      title="Watchlist"
+      title="Markets"
       actions={
-        <form onSubmit={handleAdd} className="flex items-center gap-1">
+        <form onSubmit={handleAdd} className="flex items-center gap-1.5">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Add…"
+            placeholder="Ticker"
             maxLength={6}
-            className="w-16 rounded border border-border bg-background px-1.5 py-0.5 text-xs uppercase text-text-primary outline-none focus:border-blue"
+            className="w-20 rounded-lg border border-border bg-background px-2 py-1 text-xs uppercase text-text-primary outline-none focus:border-accent"
           />
           <button
             type="submit"
-            className="rounded bg-blue px-1.5 py-0.5 text-xs font-semibold text-white hover:opacity-90"
+            className="flex h-6 w-6 items-center justify-center rounded-lg bg-accent/10 text-xs font-semibold text-accent hover:bg-accent/20"
           >
             +
           </button>
         </form>
       }
-      bodyClassName="overflow-y-auto"
+      bodyClassName="overflow-y-auto p-1.5"
     >
       {error && (
-        <p className="px-3 py-1 text-xs text-down">{error}</p>
+        <p className="mx-3 mb-1 rounded-lg bg-rose-500/10 px-3 py-1.5 text-xs text-rose-400">{error}</p>
       )}
-      <div role="rowgroup" className="divide-y divide-border/50">
+      <div role="rowgroup" className="space-y-1">
         {tickers.map((ticker) => (
           <WatchlistRow
             key={ticker}
@@ -159,7 +165,7 @@ export function Watchlist() {
           />
         ))}
         {tickers.length === 0 && (
-          <p className="px-3 py-4 text-center text-xs text-text-muted">
+          <p className="py-8 text-center text-xs text-text-muted">
             Waiting for price stream…
           </p>
         )}

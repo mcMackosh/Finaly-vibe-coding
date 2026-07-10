@@ -14,8 +14,6 @@ export function TradeBar() {
     text: string;
   } | null>(null);
 
-  // The field follows the selected chart ticker until the user types their own
-  // symbol (override); no effect needed — the value is derived during render.
   const [tickerOverride, setTickerOverride] = useState<string | null>(null);
   const ticker = tickerOverride ?? selectedTicker ?? "";
 
@@ -33,9 +31,7 @@ export function TradeBar() {
       await trade(symbol, qty, side);
       setFeedback({
         kind: "ok",
-        text: `${side === "buy" ? "Bought" : "Sold"} ${qty} ${symbol}${
-          price != null ? ` @ ${formatPrice(price)}` : ""
-        }`,
+        text: `${side === "buy" ? "Bought" : "Sold"} ${qty} ${symbol}${price != null ? ` @ ${formatPrice(price)}` : ""}`,
       });
       setQuantity("");
     } catch (err) {
@@ -49,51 +45,48 @@ export function TradeBar() {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-t border-border bg-surface px-4 py-2">
-      <span className="text-[10px] uppercase tracking-wider text-text-muted">
-        Trade
-      </span>
+    <div className="flex flex-wrap items-center gap-3 border-t border-border bg-surface px-6 py-3">
+      <span className="text-xs font-semibold text-text-muted">Trade</span>
+
       <input
         value={ticker}
         onChange={(e) => setTickerOverride(e.target.value)}
-        placeholder="Ticker"
+        placeholder="Symbol"
         maxLength={6}
-        className="w-24 rounded border border-border bg-background px-2 py-1 text-sm uppercase text-text-primary outline-none focus:border-blue"
+        className="w-24 rounded-xl border border-border bg-surface-raised px-3 py-1.5 text-sm uppercase text-text-primary outline-none focus:border-accent"
       />
       <input
         value={quantity}
         onChange={(e) => setQuantity(e.target.value)}
-        placeholder="Qty"
+        placeholder="Shares"
         type="number"
         min="0"
         step="any"
-        className="w-24 rounded border border-border bg-background px-2 py-1 text-sm text-text-primary outline-none focus:border-blue"
+        className="w-28 rounded-xl border border-border bg-surface-raised px-3 py-1.5 text-sm text-text-primary outline-none focus:border-accent"
       />
       {estCost != null && (
-        <span className="font-mono text-xs text-text-muted">
-          ≈ {formatPrice(estCost)}
+        <span className="text-sm text-text-muted">
+          ≈ <span className="font-semibold text-text-primary">{formatPrice(estCost)}</span>
         </span>
       )}
+
       <button
         onClick={() => submit("buy")}
         disabled={!valid || busy !== null}
-        className="rounded bg-purple px-4 py-1 text-sm font-semibold text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+        className="rounded-xl bg-emerald-500 px-5 py-1.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-emerald-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {busy === "buy" ? "…" : "Buy"}
       </button>
       <button
         onClick={() => submit("sell")}
         disabled={!valid || busy !== null}
-        className="rounded bg-purple px-4 py-1 text-sm font-semibold text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+        className="rounded-xl bg-rose-500 px-5 py-1.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-rose-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {busy === "sell" ? "…" : "Sell"}
       </button>
+
       {feedback && (
-        <span
-          className={`font-mono text-xs ${
-            feedback.kind === "ok" ? "text-up" : "text-down"
-          }`}
-        >
+        <span className={`text-sm font-medium ${feedback.kind === "ok" ? "text-emerald-400" : "text-rose-400"}`}>
           {feedback.text}
         </span>
       )}

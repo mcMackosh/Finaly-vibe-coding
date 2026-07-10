@@ -12,12 +12,12 @@ interface Node {
   [key: string]: string | number;
 }
 
-/** Green for gains, red for losses; intensity scales with |pnl%| up to ~5%. */
+/** Emerald for gains, rose for losses; intensity scales with |pnl%| up to ~5%. */
 function pnlFill(pnlPct: number): string {
   const t = Math.min(Math.abs(pnlPct) / 5, 1);
-  const base = 0.12;
-  const alpha = base + t * 0.5;
-  const rgb = pnlPct >= 0 ? "38, 162, 105" : "229, 72, 77";
+  const base = 0.15;
+  const alpha = base + t * 0.55;
+  const rgb = pnlPct >= 0 ? "16, 185, 129" : "244, 63, 94";
   return `rgba(${rgb}, ${alpha})`;
 }
 
@@ -40,28 +40,28 @@ function Cell({ x = 0, y = 0, width = 0, height = 0, name, pnlPct }: CellProps) 
         y={y}
         width={width}
         height={height}
+        rx={8}
         fill={pnlFill(pnlPct ?? 0)}
-        stroke="#0d1117"
-        strokeWidth={2}
+        stroke="#0f172a"
+        strokeWidth={3}
       />
       {showLabel && name && (
         <>
           <text
-            x={x + 6}
-            y={y + 16}
-            fill="#e6edf3"
-            fontSize={12}
-            fontFamily="monospace"
-            fontWeight={600}
+            x={x + 10}
+            y={y + 20}
+            fill="#f1f5f9"
+            fontSize={13}
+            fontWeight={700}
           >
             {name}
           </text>
           <text
-            x={x + 6}
-            y={y + 30}
-            fill="#e6edf3"
-            fontSize={10}
-            fontFamily="monospace"
+            x={x + 10}
+            y={y + 36}
+            fill="#f1f5f9"
+            fontSize={11}
+            opacity={0.85}
           >
             {formatPercent(pnlPct ?? 0)}
           </text>

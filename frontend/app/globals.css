@@ -6,20 +6,26 @@
  * text-muted, border-border, text-accent, etc.
  */
 @theme {
-  --color-background: #0d1117;
-  --color-surface: #161b22;
-  --color-surface-raised: #1c2230;
-  --color-border: #30363d;
-  --color-text-primary: #e6edf3;
-  --color-text-muted: #8b949e;
+  /* Backgrounds — deep slate, modern SaaS */
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface-raised: #2d3a4f;
+  --color-border: #334155;
 
-  --color-accent: #ecad0a;
-  --color-blue: #209dd7;
-  --color-purple: #753991;
+  /* Text */
+  --color-text-primary: #f1f5f9;
+  --color-text-muted: #94a3b8;
 
-  --color-up: #26a269;
-  --color-down: #e5484d;
+  /* Accent palette — cyan + violet */
+  --color-accent: #06b6d4;
+  --color-blue: #3b82f6;
+  --color-purple: #8b5cf6;
 
+  /* P&L — emerald + rose */
+  --color-up: #10b981;
+  --color-down: #f43f5e;
+
+  /* Fonts */
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
@@ -37,33 +43,32 @@ body {
 
 /* Custom scrollbar for the terminal aesthetic. */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #30363d;
-  border-radius: 4px;
+  background: #334155;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f4753;
+  background: #475569;
 }
 
 /*
- * Price flash: a class is added on each tick, then removed after the
- * transition so it can re-fire on the next tick (PLAN.md §10).
+ * Price flash — SaaS green/red tint on tick.
  */
 .price-cell {
   transition: background-color 0.5s ease-out;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 .flash-up {
-  background-color: rgba(38, 162, 105, 0.55);
+  background-color: rgba(16, 185, 129, 0.2);
   transition: background-color 0s;
 }
 .flash-down {
-  background-color: rgba(229, 72, 77, 0.55);
+  background-color: rgba(244, 63, 94, 0.2);
   transition: background-color 0s;
 }

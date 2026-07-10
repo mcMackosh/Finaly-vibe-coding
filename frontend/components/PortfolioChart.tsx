@@ -27,31 +27,31 @@ export function PortfolioChart() {
           <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
             <XAxis
               dataKey="time"
-              tick={{ fill: "#8b949e", fontSize: 10 }}
+              tick={{ fill: "#94a3b8", fontSize: 10 }}
               minTickGap={48}
-              stroke="#30363d"
+              stroke="#334155"
             />
             <YAxis
               domain={["auto", "auto"]}
-              tick={{ fill: "#8b949e", fontSize: 10 }}
+              tick={{ fill: "#94a3b8", fontSize: 10 }}
               width={64}
-              stroke="#30363d"
+              stroke="#334155"
               tickFormatter={(v: number) => `$${Math.round(v)}`}
             />
             <Tooltip
               contentStyle={{
-                background: "#1c2230",
-                border: "1px solid #30363d",
+                background: "#2d3a4f",
+                border: "1px solid #334155",
                 borderRadius: 6,
                 fontSize: 12,
               }}
-              labelStyle={{ color: "#8b949e" }}
+              labelStyle={{ color: "#94a3b8" }}
               formatter={(v) => [formatCurrency(Number(v)), "Value"]}
             />
             <Line
               type="monotone"
               dataKey="value"
-              stroke="#209dd7"
+              stroke="#3b82f6"
               strokeWidth={1.5}
               isAnimationActive={false}
               dot={false}

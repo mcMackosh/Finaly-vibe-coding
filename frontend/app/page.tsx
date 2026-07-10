@@ -18,16 +18,16 @@ function Workstation() {
     <div className="flex h-screen flex-col bg-background text-text-primary">
       <Header />
 
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 bg-background">
         <main className="flex min-w-0 flex-1 flex-col">
-          <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 overflow-auto p-2 lg:grid-cols-[280px_1fr] lg:overflow-hidden">
+          <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 overflow-auto p-3 lg:grid-cols-[300px_1fr] lg:overflow-hidden">
             <div className="min-h-0 lg:overflow-hidden">
               <Watchlist />
             </div>
 
-            <div className="grid min-h-0 grid-rows-[minmax(220px,2fr)_minmax(180px,1fr)_minmax(160px,1fr)] gap-2">
+            <div className="grid min-h-0 grid-rows-[minmax(220px,2fr)_minmax(180px,1fr)_minmax(160px,1fr)] gap-3">
               <MainChart />
-              <div className="grid min-h-0 grid-cols-1 gap-2 md:grid-cols-2">
+              <div className="grid min-h-0 grid-cols-1 gap-3 md:grid-cols-2">
                 <PortfolioHeatmap />
                 <PortfolioChart />
               </div>

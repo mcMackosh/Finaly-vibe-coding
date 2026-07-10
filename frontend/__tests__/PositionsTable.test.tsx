@@ -50,7 +50,7 @@ describe("PositionsTable", () => {
     // (110 - 100) * 10 = +$100.00, and +10.00%
     expect(screen.getByText("+$100.00")).toBeInTheDocument();
     expect(screen.getByText("+10.00%")).toBeInTheDocument();
-    expect(screen.getByText("Cash:").parentElement).toHaveTextContent(
+    expect(screen.getByText("Available cash:").parentElement).toHaveTextContent(
       "$5,000.00",
     );
   });

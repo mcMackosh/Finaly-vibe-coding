@@ -74,7 +74,7 @@ describe("Watchlist", () => {
     const addTicker = vi.fn().mockResolvedValue(undefined);
     storeRef.current = makeStore({ addTicker });
     render(<Watchlist />);
-    await userEvent.type(screen.getByPlaceholderText("Add…"), "pypl");
+    await userEvent.type(screen.getByPlaceholderText("Ticker"), "pypl");
     await userEvent.click(screen.getByRole("button", { name: "+" }));
     expect(addTicker).toHaveBeenCalledWith("PYPL");
   });
