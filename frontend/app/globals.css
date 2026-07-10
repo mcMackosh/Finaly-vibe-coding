@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+/*
+ * FinAlly design tokens (PLAN.md §2). Dark, terminal-inspired.
+ * Tailwind v4 reads these from @theme, exposing utilities like bg-surface,
+ * text-muted, border-border, text-accent, etc.
+ */
+@theme {
+  --color-background: #0d1117;
+  --color-surface: #161b22;
+  --color-surface-raised: #1c2230;
+  --color-border: #30363d;
+  --color-text-primary: #e6edf3;
+  --color-text-muted: #8b949e;
+
+  --color-accent: #ecad0a;
+  --color-blue: #209dd7;
+  --color-purple: #753991;
+
+  --color-up: #26a269;
+  --color-down: #e5484d;
+
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+/* Custom scrollbar for the terminal aesthetic. */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #30363d;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3f4753;
+}
+
+/*
+ * Price flash: a class is added on each tick, then removed after the
+ * transition so it can re-fire on the next tick (PLAN.md §10).
+ */
+.price-cell {
+  transition: background-color 0.5s ease-out;
+  border-radius: 4px;
+}
+.flash-up {
+  background-color: rgba(38, 162, 105, 0.55);
+  transition: background-color 0s;
+}
+.flash-down {
+  background-color: rgba(229, 72, 77, 0.55);
+  transition: background-color 0s;
+}

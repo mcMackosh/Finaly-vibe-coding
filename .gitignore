@@ -58,3 +58,12 @@ temp/
 *.swo
 .DS_Store
 Thumbs.db
+
+# ---------- Runtime SQLite database ----------
+db/finally.db
+
+# ---------- E2E / Playwright artifacts ----------
+playwright-report/
+test-results/
+test-db*/
+db/finally.db-*
