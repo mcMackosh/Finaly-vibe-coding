@@ -1,6 +1,14 @@
 """FastAPI app: wires the price cache + simulator and serves the SSE stream."""
 
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+# Load .env from the project root so env vars are available in all contexts
+# (local dev without Docker, Docker via --env-file, CI, etc.)
+_dotenv = Path(__file__).resolve().parents[2] / ".env"
+load_dotenv(_dotenv)
 from contextlib import asynccontextmanager
 from pathlib import Path
 
